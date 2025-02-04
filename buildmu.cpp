@@ -79,6 +79,12 @@ void buildmu(){
                                      n_opdet, 0., double(n_opdet),
                                      90, 0., 1400.);
 
+  TH2D* h_Ghost = new TH2D("h_Ghost",Form("%s;%s;%s", "Reco_Ghost", "Event", "Reco_Ghost"),
+                           100, 0, 100, 100, 0, 100); //Ghost PE-> photons we could ignore.
+  
+  TH2D* h_Residual = new TH2D("h_Residual",Form("%s;%s;%s", "", "Reco-True/True", "True"),
+                              100, -1000, 1000, 100, 0, 1000);
+
   // TEfficiency* he_Ophit_OpDet = nullptr;
   
   // --- PDF -------------------------------------------------------------------
@@ -144,6 +150,14 @@ void buildmu(){
             // }
           h2_Mu_Pe->Fill((*OpHitPes)[idx_hit], exp_ph);
           h2_HitTime_HitPe->Fill((*OpHitTimes)[idx_hit], (*OpHitPes)[idx_hit]);
+          // if (exp_ph > exp_ph_min){
+                 h_Residual->Fill(((((*OpHitPes)[idx_hit])- exp_ph)/exp_ph)*100, exp_ph);  //problem with exp_min
+          //  }
+          //------Found the Ghost PE-------
+            if(exp_ph == exp_ph_min && (*OpHitPes)[idx_hit] > 0.0 ){   
+               h_Ghost->Fill(event_true, (*OpHitPes)[idx_hit]); 
+              //std::cout << "event_true" << event_true << "--"<<(*OpHitPes)[idx_hit] << std::endl;
+              } //Ghost PE
         } else {
           term = 1. - P_hit_mu;
           h2_Mu_Pe->Fill(0., exp_ph);
@@ -157,8 +171,7 @@ void buildmu(){
           }
         }
         Fq += -log(term);
-
-
+        
         // if(abs((*OpHitPes)[idx_hit]-exp_ph)>10 && (*OpHitPes)[idx_hit]<1.){
         //   std::cout << idx_opdet << std::endl; 
         // }
@@ -223,6 +236,16 @@ void buildmu(){
   c_HitTime_HitPE->cd();
   h2_HitTime_HitPe->Draw("colz"); 
   c_HitTime_HitPE->Modified(); c_HitTime_HitPE->Update();
+
+  TCanvas* c_Resid= new TCanvas("c_Resid","c_Resid",0,0,800,600);
+  c_Resid->cd();
+  h_Residual->Draw("colz");
+  c_Resid->Modified(); c_Resid->Update();
+
+  TCanvas* c_Ghost= new TCanvas("c_Ghost","c_Ghost",0,0,800,600);
+  c_Ghost->cd();
+  h_Ghost->Draw("colz");
+  c_Ghost->Modified(); c_Ghost->Update();
 
   // TCanvas* c_Eff_ExpReco = new TCanvas("c_Eff_ExpReco","c_Eff_ExpReco",0,0,800,600);
   // c_Eff_ExpReco->cd();
