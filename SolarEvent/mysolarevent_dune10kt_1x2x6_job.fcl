@@ -24,9 +24,7 @@ source:
   module_type: RootInput
   maxEvents:  10      # Number of events to create
   #specify from command line with -s or --source
-  saveMemoryObjectThreshold: 0
-  #_inputCommands: ["keep *_*_*_*", "drop *_*_*_Reco" "problema con esta linea"]
-   
+  saveMemoryObjectThreshold: 0    
 }
 
 
@@ -38,7 +36,6 @@ physics:
 {
 producers:
 {
-   #solarcluster:    @local::solar_cluster_dune10kt_1x2x6
    solarevent:      @local::solar_event_dune10kt_1x2x6
 }
 
@@ -67,13 +64,4 @@ outputs:
    }
 }
 
-#services.message.destinations.LogStandardOut: 
-#{ 
- # threshold: "INFO"  #DEBUG
- # type: "cout" 
-#}
-
 physics.producers.solarevent.Geometry: "hd"
-#physics.producers.solarevent.InputModule: "solarcluster"
-#physics.producers.solarevent.ClusterLabel:"solarcluster:solarevent"
-#physics.producers.solarevent.InstanceName: ""
